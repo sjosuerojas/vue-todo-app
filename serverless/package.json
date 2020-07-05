@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "webpack-dev-server --config ./webpack.dev.config.js",
-    "build:dll": "webpack --config ./webpack.dll.config.js",
-    "build": "webpack --config ./webpack.config.js"
+    "start:dev": "webpack-dev-server --env.ENVIRONMENT=development --config ./webpack.dev.config.js",
+    "build:dll": "webpack --env.ENVIRONMENT=production --config ./webpack.dll.config.js",
+    "build": "webpack --env.ENVIRONMENT=production --config ./webpack.config.js"
   },
   "dependencies": {
     "core-js": "3.6.5",
+    "firebase": "7.15.5",
     "vue": "2.6.11",
     "vue-router": "3.2.0",
     "vuetify": "2.2.29"

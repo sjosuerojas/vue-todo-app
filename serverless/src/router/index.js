@@ -22,7 +22,7 @@ function configRoutes() {
       name: 'ToDo',
       component: ToDo,
       meta: {
-        title: `ToDo-App | Invitación`,
+        title: `ToDo-App | Home`,
       },
     }, 
     {
