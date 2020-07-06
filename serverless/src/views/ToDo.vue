@@ -2,7 +2,7 @@
   <Layout>
     <v-card :loading="loading" max-width="600" class="mx-auto">
       <v-app-bar dark color="light-green">
-        <v-toolbar-title>Today's Tasks ({{ currentTasks }})</v-toolbar-title>
+        <v-toolbar-title>Today's Tasks ({{ currentLenTasks }})</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-text-field
           flat
@@ -13,7 +13,9 @@
           class="hidden-sm-and-down"
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-btn color="light-green darken-4">Add</v-btn>
+        <v-btn @click="refreshTask" color="light-green darken-4">
+          <v-icon>mdi-refresh</v-icon>
+        </v-btn>
       </v-app-bar>
 
       <v-container>
@@ -44,17 +46,13 @@
                     <v-list dense>
                       <v-list-item-group>
                         <v-list-item>
-                          <v-list-item-content>
-                            <v-list-item-title>
-                              Edit
-                            </v-list-item-title> 
+                          <v-list-item-content @click="updateTask(task.id)">
+                            <v-list-item-title>Edit</v-list-item-title>
                           </v-list-item-content>
                         </v-list-item>
                         <v-list-item>
-                          <v-list-item-content>
-                            <v-list-item-title>
-                              Delete
-                            </v-list-item-title> 
+                          <v-list-item-content @click="deleteTask(task.id)">
+                            <v-list-item-title>Delete</v-list-item-title>
                           </v-list-item-content>
                         </v-list-item>
                       </v-list-item-group>
@@ -66,6 +64,10 @@
           </v-col>
         </v-row>
       </v-container>
+
+      <v-dialog v-model="updateModal" max-width="600px">
+        <NewTaskModal :editing="editing" :objectTasks="objectTasks" />
+      </v-dialog>
 
       <v-snackbar v-model="snackbar">
         {{ textError }}
@@ -79,23 +81,37 @@
 
 <script>
 import Layout from '@/containers/Layout.vue'
+import NewTaskModal from '@/components/NewTaskModal.vue'
 import { db } from '@/services/firebase'
 
 export default {
   name: 'ToDo',
   components: {
     Layout,
+    NewTaskModal,
   },
   data: () => ({
     today: new Date().toISOString().substring(0, 10),
     snackbar: false,
+    updateModal: false,
+    editing: false,
     textError: null,
     loading: false,
+    currentIdTask: null,
+    objectTasks: null,
     tasks: [],
   }),
   computed: {
-    currentTasks() {
+    currentLenTasks() {
       return this.tasks.length
+    },
+    currentlyTask() {
+      if (this.currentIdTask != null) {
+        const currentTask = this.tasks.filter(
+          task => task.id == this.currentIdTask
+        )
+        return currentTask
+      }
     },
   },
   created() {
@@ -118,6 +134,19 @@ export default {
         this.textError = 'Error found:' + error
       }
     },
+    refreshTask() {
+      this.tasks = null
+      this.loading = true
+      this.currentLenTasks = 0
+      this.getTasks()
+    },
+    updateTask(id) {
+      this.updateModal = true
+      this.editing = true
+      this.currentIdTask = id
+      this.objectTasks = this.currentlyTask
+    },
+    async deleteTask(id) {},
   },
 }
 </script>
