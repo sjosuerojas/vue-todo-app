@@ -1,5 +1,7 @@
 # Vue-todo-app
 
+![alt text](./assets-readme/image-readme.jpg)
+
 ## Project setup
 ```
 npm install
